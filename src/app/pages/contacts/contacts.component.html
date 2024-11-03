@@ -1,0 +1,44 @@
+<div class="container mx-auto flex-1 px-6 sm:px-10">
+    <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Contact Us</h1>
+
+    <div class="flex flex-col sm:flex-row justify-between mb-8">
+        <!-- Информация о компании -->
+        <div class="bg-white p-8 shadow-md rounded-lg max-w-lg mb-8 sm:mb-0">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Our Location</h2>
+            <p class="text-gray-600 mb-4">
+                <strong>Address:</strong> 123 Main Street, Cityname, State, 12345
+            </p>
+            <p class="text-gray-600 mb-4">
+                <strong>Phone:</strong> <a href="tel:+1234567890" class="text-blue-500 hover:underline">+1 (234) 567-890</a>
+            </p>
+            <p class="text-gray-600 mb-4">
+                <strong>Email:</strong> <a href="mailto:info@company.com" class="text-blue-500 hover:underline">infщ.com</a>
+            </p>
+            <p class="text-gray-600">
+                <strong>Business Hours:</strong> Monday - Friday, 9:00 AM - 5:00 PM
+            </p>
+        </div>
+
+        <!-- Контейнер для карты -->
+        <div id="map" class="w-full h-64 sm:h-80 ml-0 sm:ml-6 rounded-lg shadow-md overflow-hidden"></div>
+    </div>
+</div>
+
+<!-- Подключение Google Maps API -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+
+<script>
+    // Функция для инициализации карты
+    function initMap() {
+        const location = { lat: 37.7749, lng: -122.4194 }; // Замените на ваши координаты
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 12,
+            center: location,
+        });
+
+        const marker = new google.maps.Marker({
+            position: location,
+            map: map,
+        });
+    }
+</script>

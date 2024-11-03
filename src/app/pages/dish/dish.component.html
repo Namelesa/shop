@@ -1,0 +1,25 @@
+<div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-200 transform hover:scale-105">
+  <div class="mb-4">
+    <a [routerLink]="['/dish', dish.id]">
+      <img [src]="dish.image" alt="{{ dish.name }}" class="w-full h-48 object-cover rounded-lg">
+    </a>
+  </div>
+
+  <div class="flex justify-between items-center mb-4">
+
+    <a [routerLink]="['/dish', dish.id]" class="text-2xl font-bold text-gray-800 hover:underline">
+      {{ dish.name }}
+    </a>
+  </div>
+
+  <button
+    (click)="buyDish()"
+    class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition duration-200"
+  >
+    Buy
+  </button>
+
+  <a [routerLink]="['/dish', dish.id]" class="block text-center text-blue-500 hover:underline mt-4">
+    View Details
+  </a>
+</div>
