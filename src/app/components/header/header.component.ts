@@ -11,5 +11,4 @@ import { RouterModule } from '@angular/router';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
-  icon = faArrowRightFromBracket
 }

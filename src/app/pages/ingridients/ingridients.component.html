@@ -1,13 +1,88 @@
 <div class="container mx-auto flex-1">
-    <h1 class="text-4xl font-bold text-center mb-10 text-gray-800">Our Ingridients</h1>
-
+    <h1 class="text-4xl font-bold text-center mb-10 text-gray-800">Ingredients</h1>
+    
+    <!-- Список ингредиентов -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      </div>
-      
-
-    <div class="flex justify-center mb-6">
-        <button class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-500 transition duration-200">
-            Add New Ingridients
+      <div *ngFor="let ingredient of filteredIngredients" class="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between card transform transition-transform duration-500 hover:scale-105">
+        <div class="flex flex-col items-center">
+          <a *ngIf="ingredient.image" (click)="openIngredientDetails(ingredient)" class="cursor-pointer">
+            <img [src]="ingredient.image" alt="{{ ingredient.name }} photo" class="w-32 h-32 object-cover mb-4 rounded-lg" />
+          </a>
+          <span class="text-lg font-semibold text-gray-800">{{ ingredient.name }}</span>
+          <p class="text-gray-600">{{ ingredient.description }}</p>
+        </div>
+        <button class="mt-4 bg-blue-600 text-white py-1 px-4 rounded hover:bg-blue-500 transition duration-200" (click)="openIngredientDetails(ingredient)">
+          View Details
         </button>
+      </div>
+    </div>
+
+    <!-- Кнопка для добавления нового ингредиента -->
+    <div class="flex justify-center mt-10">
+      <button class="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-500 transition duration-200" (click)="openAddIngredientModal()">
+        Add New Ingredient
+      </button>
+    </div>
+
+    <!-- Модальное окно для деталей ингредиента -->
+    <div *ngIf="showDetails" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" (click)="closeDetails()">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4 transform transition-transform duration-300 scale-100" (click)="$event.stopPropagation()">
+        <div class="flex justify-end">
+          <button (click)="closeDetails()" class="text-gray-600 hover:text-gray-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ selectedIngredient.name }}</h2>
+        <p class="text-gray-600">{{ selectedIngredient.description }}</p>
+        <img *ngIf="selectedIngredient.image" [src]="selectedIngredient.image" alt="{{ selectedIngredient.name }}" class="mt-4 w-32 h-32 object-cover rounded-lg"/>
+  
+        <!-- Список блюд, содержащих этот ингредиент -->
+        <h3 class="text-lg font-semibold text-gray-800 mt-6">Dishes containing this ingredient:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <li *ngFor="let dish of dishesContainingIngredient">
+            <a [routerLink]="['/dishes', dish.id]" class="text-blue-600 hover:underline">{{ dish.name }}</a>
+          </li>
+        </ul>
+  
+        <!-- Кнопки для редактирования и удаления -->
+        <div class="flex justify-between mt-6">
+          <button class="bg-red-600 text-white py-1 px-4 rounded hover:bg-red-500 transition duration-200" (click)="deleteIngredient(selectedIngredient)">
+            Delete
+          </button>
+          <button class="bg-yellow-600 text-white py-1 px-4 rounded hover:bg-yellow-500 transition duration-200" (click)="openEditIngredientModal(selectedIngredient)">
+            Edit
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Модальное окно для добавления/редактирования ингредиента -->
+    <div *ngIf="showAddEditModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" (click)="closeAddEditModal()">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-4 transform transition-transform duration-300 scale-100" (click)="$event.stopPropagation()">
+        <div class="flex justify-end">
+          <button (click)="closeAddEditModal()" class="text-gray-600 hover:text-gray-800">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">{{ isEditMode ? 'Edit Ingredient' : 'Add New Ingredient' }}</h2>
+        <input type="text" [(ngModel)]="selectedIngredient.name" placeholder="Ingredient Name" class="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <div *ngIf="nameError" class="text-red-500 text-sm">Name is required.</div>
+        <div *ngIf="nameLengthError" class="text-red-500 text-sm">Name must be at least 3 characters long.</div>
+        <div *ngIf="nameMaxLengthError" class="text-red-500 text-sm">Name must be less than 50 characters.</div>
+        <input type="text" id="photo" [(ngModel)]="selectedIngredient.image" placeholder="Image URL" class="w-full border p-3 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <div *ngIf="imageError" class="text-red-500 text-sm">A valid image URL is required.</div>
+        <img *ngIf="selectedIngredient.image" [src]="selectedIngredient.image" alt="Preview" class="mt-4 w-32 h-32 object-cover rounded-lg"/>
+
+        <!-- Кнопка сохранения -->
+        <div class="flex justify-end">
+          <button class="bg-green-600 text-white py-2 px-5 rounded-full hover:bg-green-500 transition duration-200" (click)="saveIngredient()">
+            {{ isEditMode ? 'Update' : 'Save' }}
+          </button>
+        </div>
+      </div>
     </div>
 </div>

@@ -1,0 +1,32 @@
+.container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: scale(1.05);
+  }
+  
+  .card img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  
+  .bg-opacity-50 {
+    opacity: 0.5;
+  }
+  
+  .bg-black {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+  
+  
+  .card:hover {
+    transform: translateY(-10px); /* Карточка немного поднимется */
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); /* Добавление тени при наведении */
+  }
+  

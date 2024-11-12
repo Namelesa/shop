@@ -1,1 +1,65 @@
-<p>orders works!</p>
+<div *ngIf="orders && orders.length > 0" class="max-w-4xl mx-auto mt-8">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+      <thead>
+        <tr class="text-left bg-gray-100">
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Order ID</th>
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Order Date</th>
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Total</th>
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders" (click)="onOrderClick(order.id)" class="cursor-pointer hover:bg-gray-100">
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.id }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.orderDate | date }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.total | currency }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">
+            <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none">
+              View Details
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div *ngIf="selectedOrder" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full relative">
+      <button class="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl" (click)="selectedOrder = null">
+        &times;
+      </button>
+  
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Order Details</h2>
+      <p><strong class="text-gray-700">Order ID:</strong> {{ selectedOrder.id }}</p>
+      <p><strong class="text-gray-700">Order Date:</strong> {{ selectedOrder.orderDate | date }}</p>
+      <p><strong class="text-gray-700">Total:</strong> {{ selectedOrder.total | currency }}</p>
+  
+      <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-2">Order Items</h3>
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+        <thead>
+          <tr class="text-left bg-gray-100">
+            <th class="px-6 py-3 text-sm font-semibold text-gray-700">Dish Name</th>
+            <th class="px-6 py-3 text-sm font-semibold text-gray-700">Quantity</th>
+            <th class="px-6 py-3 text-sm font-semibold text-gray-700">Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let detail of selectedOrder.orderDetails" class="border-t hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ detail.dish.name }}</td>
+            <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ detail.quantity }}</td>
+            <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ detail.dish.price | currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+  
+      <div class="mt-4 flex justify-end space-x-4">
+        <button class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 focus:outline-none" (click)="onEditOrder(selectedOrder.id)">
+          Edit
+        </button>
+        <button class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none" (click)="onDeleteOrder(selectedOrder.id)">
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+  

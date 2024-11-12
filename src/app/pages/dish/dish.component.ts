@@ -1,5 +1,6 @@
 import { Component, importProvidersFrom, Input } from '@angular/core';
 import { RouterModule } from '@angular/router'; 
+import { NotificationService } from '../../content/services/notification.service';
 
 @Component({
   selector: 'app-dish',
@@ -11,7 +12,12 @@ import { RouterModule } from '@angular/router';
 export class DishComponent {
   @Input() dish: any;
 
+  constructor(
+    private notificationService : NotificationService,
+  ){}
+
   buyDish(): void {
+    this.notificationService.showSuccess('Dish successfully added into cart');
     console.log(`Buying ${this.dish.name}`);
   }
 }

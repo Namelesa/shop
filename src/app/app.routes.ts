@@ -9,6 +9,7 @@ import { TermsComponent } from './pages/terms/terms.component';
 import { ContactsComponent } from './pages/contacts/contacts.component';
 import { PrivacyPoliceComponent } from './pages/privacy-police/privacy-police.component';
 import { DishDescriptionComponent } from './pages/dish-description/dish-description.component';
+import { SizesComponent } from './pages/sizes/sizes.component';
 
 export const routes: Routes = [
   {
@@ -52,6 +53,11 @@ export const routes: Routes = [
   {
     path: 'privacy',
     component: PrivacyPoliceComponent,
+  },
+  {
+    path: 'sizes',
+    component: SizesComponent,
+    title: 'Size'
   },
   { 
     path: '**', 

@@ -1,14 +1,43 @@
 <div class="container mx-auto flex-1">
-    <h1 class="text-4xl font-bold text-center mb-10 text-gray-800">Our Menu</h1>
+  <h1 class="text-4xl font-bold text-center mb-10 text-gray-800">Our Menu</h1>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <app-dish *ngFor="let dish of dishes" [dish]="dish"></app-dish>
-      </div>
-      
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <app-dish *ngFor="let dish of dishes" [dish]="dish"></app-dish>
+  </div>
 
-    <div class="flex justify-center mb-6">
-        <button class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-500 transition duration-200">
-            Add New Dish
+  <div class="flex justify-center mb-6">
+    <button class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-500 transition duration-200"
+            (click)="toggleAddDishForm()">
+      Add New Dish
+    </button>
+  </div>
+
+  <div *ngIf="showForm" class="modal-overlay" (click)="toggleAddDishForm()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <form (ngSubmit)="addDish()">
+        <div class="mb-4">
+          <label for="name" class="block text-gray-700">Dish Name</label>
+          <input type="text" id="name" [(ngModel)]="newDish.name" name="name" required class="w-full p-2 border border-gray-300 rounded" />
+          <div *ngIf="nameError" class="text-red-500 text-sm">Name is required.</div>
+        </div>
+        <div class="mb-4">
+          <label for="price" class="block text-gray-700">Price</label>
+          <input type="number" id="price" [(ngModel)]="newDish.price" name="price" required class="w-full p-2 border border-gray-300 rounded" />
+          <div *ngIf="priceError" class="text-red-500 text-sm">Price must be greater than 0.</div>
+        </div>
+        <div class="mb-4">
+          <label for="ingredients" class="block text-gray-700">Ingredients</label>
+          <input type="text" id="ingredients" [(ngModel)]="newDish.ingredients" name="ingredients" class="w-full p-2 border border-gray-300 rounded" />
+        </div>
+        <div class="mb-4">
+          <label for="image" class="block text-gray-700">Image</label>
+          <input type="text" id="image" [(ngModel)]="newDish.image" name="image" required class="w-full p-2 border border-gray-300 rounded" />
+          <div *ngIf="imageError" class="text-red-500 text-sm">A valid image URL is required.</div>
+        </div>
+        <button type="submit" class="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-500 transition duration-200">
+          Submit
         </button>
+      </form>
     </div>
+  </div>
 </div>

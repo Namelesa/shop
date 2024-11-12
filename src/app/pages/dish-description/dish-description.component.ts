@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { DishService } from '../../content/services/dish.service';
 import { DishSizeService } from '../../content/services/dish.size.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Импортируем FormsModule
+import { FormsModule } from '@angular/forms';
+import { NotificationService } from '../../content/services/notification.service';
 
 @Component({
   selector: 'app-dish-description',
   templateUrl: './dish-description.component.html',
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule], // Добавляем FormsModule
-  styleUrls: ['./dish-description.component.scss']
+  imports: [RouterModule, CommonModule, FormsModule],
+  styleUrls: ['./dish-description.component.scss'],
 })
 export class DishDescriptionComponent implements OnInit {
   dish: any;
@@ -20,12 +21,21 @@ export class DishDescriptionComponent implements OnInit {
   error: string | null = null;
   selectedSize: any = null;
   selectedPrice: number = 0;
-  isEditing: boolean = false; // Свойство для отслеживания режима редактирования
+  isEditing: boolean = false;
+  newprice: number = 0;
+  addprice: number = 0;
+  nameError = false;
+  imageError = false;
+  priceError = false;
+  nameLengthError = false;
+  nameMaxLengthError = false;
 
   constructor(
     private route: ActivatedRoute,
     private dishService: DishService,
-    private dishSizeService: DishSizeService
+    private dishSizeService: DishSizeService,
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit() {
@@ -44,7 +54,7 @@ export class DishDescriptionComponent implements OnInit {
         this.loading = false;
       },
       (error) => {
-        this.error = 'Не удалось загрузить данные о блюде';
+        this.error = 'Failed to load dish data';
         this.loading = false;
       }
     );
@@ -57,21 +67,78 @@ export class DishDescriptionComponent implements OnInit {
         this.sizes.sort((a, b) => a.price - b.price);
       },
       (error) => {
-        this.error = 'Не удалось загрузить размеры блюда';
+        this.error = 'Failed to load dish dimensions';
       }
     );
   }
 
   selectSize(size: any) {
     this.selectedSize = size;
+
     this.selectedPrice = this.dish.price + size.price;
+    this.addprice = size.price;
   }
 
   toggleEditMode() {
     this.isEditing = !this.isEditing;
+    if (!this.isEditing) {
+      this.selectedSize = null;
+      this.selectedPrice = this.dish.price;
+    }
+  }
+
+  validateInputs() {
+    this.nameError = !this.dish.name;
+    this.nameLengthError = this.dish.name.length < 3;
+    this.nameMaxLengthError = this.dish.name.length > 50;
+    this.imageError = !/^https?:\/\/.+/i.test(this.dish.image);
+    this.priceError = !(this.newprice > 0);
   }
 
   submitChanges() {
-    this.isEditing = false;
+    this.validateInputs();
+    if (!this.nameError && !this.imageError && !this.priceError) {
+      const dishDto: any = {
+        name: this.dish.name,
+        image: this.dish.image,
+        dishIngridientsNames: this.dish.ingridients.map((i: any) => i.name),
+        size: this.selectedSize?.size || this.dish.dishSize.size,
+        price: this.newprice > 0 ? this.newprice + this.addprice : this.dish.price,
+      };
+
+      this.dishService.updateDish(this.dish.id, dishDto).subscribe(
+        () => {
+          this.notificationService.showSuccess('Changes successfully saved');
+          this.isEditing = false;
+          this.fetchDishDetails(this.dish.id);
+        },
+        (error) => {
+          this.notificationService.showError('Error saving changes');
+          this.error = 'Error saving changes';
+        }
+      );
+    } else {
+      this.error = 'Please fix the errors before submitting.';
+    }
+  }
+
+  deleteDish(id: number) {
+    if (confirm('Are you sure you want to remove this dish?')) {
+      this.dishService.deleteDish(id).subscribe(
+        () => {
+          this.notificationService.showSuccess('Dish successfully deleted');
+          this.dishService.clearCache();
+          this.router.navigate(['/home']);
+        },
+        (error) => {
+          this.notificationService.showError('Error deleting dish');
+          console.error('Error details:', error);
+        }
+      );
+    }
+  }
+
+  buyDish() {
+    this.notificationService.showSuccess('Dish successfully added into cart');
   }
 }

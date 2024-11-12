@@ -1,0 +1,21 @@
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  
+    &.success {
+      background-color: #4caf50;
+    }
+  
+    &.error {
+      background-color: #f44336;
+    }
+  }
+  
