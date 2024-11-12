@@ -111,10 +111,11 @@ export class SizesComponent implements OnInit {
           const index = this.sizes.findIndex(size => size.id === updatedSize.id);
           if (index !== -1) {
             this.sizes[index] = updatedSize;
-            this.notificationService.showSuccess('Changes successfully saved');
             this.sortSizes();
             this.toggleAddSizeForm();
           }
+          this.notificationService.showSuccess('Changes successfully saved');
+          window.location.reload();
         },
         () => {
           this.notificationService.showError('Error saving changes');
