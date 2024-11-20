@@ -1,65 +1,96 @@
 <div *ngIf="orders && orders.length > 0" class="max-w-4xl mx-auto mt-8">
+  <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+    <thead>
+      <tr class="text-left bg-gray-100">
+        <th class="px-6 py-3 text-sm font-semibold text-gray-700">Order ID</th>
+        <th class="px-6 py-3 text-sm font-semibold text-gray-700">Order Date</th>
+        <th class="px-6 py-3 text-sm font-semibold text-gray-700">Total</th>
+        <th class="px-6 py-3 text-sm font-semibold text-gray-700">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders" (click)="onOrderClick(order.id)" class="cursor-pointer hover:bg-gray-100">
+        <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.id }}</td>
+        <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.orderDate | date }}</td>
+        <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.total | currency }}</td>
+        <td class="px-6 py-4 text-sm font-medium text-gray-800">
+          <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none">
+            View Details
+          </button>
+          <button (click)="onDeleteOrder(order.id, $event)" class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none ml-2">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="!orders || orders.length === 0" class="max-w-4xl mx-auto mt-8 text-center">
+  <p class="text-gray-600 text-lg">No orders found. Start by placing your first order!</p>
+</div>
+
+<div *ngIf="selectedOrder" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+  <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full relative">
+    <button class="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl" (click)="closeModal()">
+      &times;
+    </button>
+
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Order Details</h2>
+    <p><strong class="text-gray-700">Order ID:</strong> {{ selectedOrder.id }}</p>
+    <p><strong class="text-gray-700">Order Date:</strong> {{ selectedOrder.orderDate | date }}</p>
+    <p><strong class="text-gray-700">Total:</strong> {{ selectedOrder.total | currency }}</p>
+
+    <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-2">Items in Order</h3>
     <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
       <thead>
         <tr class="text-left bg-gray-100">
-          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Order ID</th>
-          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Order Date</th>
-          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Total</th>
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Dish Name</th>
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Quantity</th>
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Size</th>
+          <th class="px-6 py-3 text-sm font-semibold text-gray-700">Price</th>
           <th class="px-6 py-3 text-sm font-semibold text-gray-700">Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let order of orders" (click)="onOrderClick(order.id)" class="cursor-pointer hover:bg-gray-100">
-          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.id }}</td>
-          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.orderDate | date }}</td>
-          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ order.total | currency }}</td>
+        <tr *ngFor="let item of selectedOrder.items">
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ item.dishName }}</td>
           <td class="px-6 py-4 text-sm font-medium text-gray-800">
-            <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none">
-              View Details
-            </button>
+            <input [(ngModel)]="item.quantity" type="number" min="1" class="px-2 py-1 border border-gray-300 rounded-md">
           </td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">
+            <select [(ngModel)]="item.size" class="px-2 py-1 border border-gray-300 rounded-md">
+              <option *ngFor="let size of sizes" [value]="size.size">{{ size.size }}</option>
+            </select>            
+          </td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ item.price | currency }}</td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-800">
+            <button (click)="onUpdateOrderDetail(item.orderDetailId, item.dishId, item.quantity, item.size)"
+                    class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none">
+              Update
+            </button>
+            <button (click)="onDeleteOrderItem(item.orderDetailId, $event)" 
+                    class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none ml-2">
+              Delete
+            </button>
+          </td>          
         </tr>
       </tbody>
     </table>
-  </div>
-  
-  <div *ngIf="selectedOrder" class="fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-4xl w-full relative">
-      <button class="absolute top-2 right-2 text-gray-700 hover:text-gray-900 text-2xl" (click)="selectedOrder = null">
-        &times;
+
+    <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-2">Add Dish to Order</h3>
+    <div class="flex items-center space-x-4 mb-4">
+      <select [(ngModel)]="newDishId" class="px-2 py-1 border border-gray-300 rounded-md">
+        <option *ngFor="let dish of dishes" [value]="dish.id">{{ dish.name }}</option>
+      </select>
+      <select [(ngModel)]="newDishSize" class="px-2 py-1 border border-gray-300 rounded-md">
+        <option *ngFor="let size of sizes" [value]="size.size">{{ size.size }}</option>
+      </select>
+      <input [(ngModel)]="newDishQuantity" type="number" min="1" placeholder="Quantity" class="px-2 py-1 border border-gray-300 rounded-md">
+      <button (click)="onAddDishToOrder(selectedOrder.id, newDishId, newDishQuantity, newDishSize)"
+              class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none">
+        Add Dish
       </button>
-  
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Order Details</h2>
-      <p><strong class="text-gray-700">Order ID:</strong> {{ selectedOrder.id }}</p>
-      <p><strong class="text-gray-700">Order Date:</strong> {{ selectedOrder.orderDate | date }}</p>
-      <p><strong class="text-gray-700">Total:</strong> {{ selectedOrder.total | currency }}</p>
-  
-      <h3 class="text-xl font-semibold text-gray-800 mt-6 mb-2">Order Items</h3>
-      <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-        <thead>
-          <tr class="text-left bg-gray-100">
-            <th class="px-6 py-3 text-sm font-semibold text-gray-700">Dish Name</th>
-            <th class="px-6 py-3 text-sm font-semibold text-gray-700">Quantity</th>
-            <th class="px-6 py-3 text-sm font-semibold text-gray-700">Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let detail of selectedOrder.orderDetails" class="border-t hover:bg-gray-50">
-            <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ detail.dish.name }}</td>
-            <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ detail.quantity }}</td>
-            <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ detail.dish.price | currency }}</td>
-          </tr>
-        </tbody>
-      </table>
-  
-      <div class="mt-4 flex justify-end space-x-4">
-        <button class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 focus:outline-none" (click)="onEditOrder(selectedOrder.id)">
-          Edit
-        </button>
-        <button class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none" (click)="onDeleteOrder(selectedOrder.id)">
-          Delete
-        </button>
-      </div>
     </div>
   </div>
-  
+</div>

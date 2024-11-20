@@ -6,6 +6,7 @@ import { DishSizeService } from '../../content/services/dish.size.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../content/services/notification.service';
+import { encryptCartData, decryptCartData } from '../../content/services/cart.unit.service';
 
 @Component({
   selector: 'app-dish-description',
@@ -36,6 +37,7 @@ export class DishDescriptionComponent implements OnInit {
     private dishSizeService: DishSizeService,
     private router: Router,
     private notificationService: NotificationService
+    
   ) {}
 
   ngOnInit() {
@@ -138,7 +140,36 @@ export class DishDescriptionComponent implements OnInit {
     }
   }
 
-  buyDish() {
-    this.notificationService.showSuccess('Dish successfully added into cart');
+
+  buyDish(): void {
+    let cart = decryptCartData(localStorage.getItem('cart') || '');
+  
+    if (!Array.isArray(cart)) {
+      cart = [];
+    }
+  
+    const newDish = {
+      productId: this.dish.id,
+      title: this.dish.name,
+      price: this.selectedPrice,
+      quantity: 1,
+      size: this.selectedSize?.size || 'S',
+      image: this.dish.image
+    };
+  
+    const existingDish = cart.find((item: any) => item.productId === newDish.productId && item.size === newDish.size);
+  
+    if (existingDish) {
+      existingDish.quantity += 1;
+      this.notificationService.showSuccess('Quantity of this dish updated in the cart');
+    } else {
+      cart.push(newDish); 
+      this.notificationService.showSuccess('Dish successfully added to the cart');
+    }
+
+    const encryptedCart = encryptCartData(cart);
+    localStorage.setItem('cart', encryptedCart);
+    this.router.navigate(['/home']);
   }
+  
 }

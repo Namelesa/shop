@@ -16,8 +16,11 @@
                        class="hover:text-gray-900 transition-colors duration-200">Ingredients</a>
                 </li>
                 <li>
-                    <a [routerLink]="['/']" routerLinkActive="text-gray-900"
-                       class="hover:text-gray-900 transition-colors duration-200">Cart</a>
+                    <a [routerLink]="['/cart']" routerLinkActive="text-gray-900"
+                       class="hover:text-gray-900 transition-colors duration-200">
+                       <fa-icon [icon]="test">
+                       </fa-icon>
+                    </a>
                 </li>
                 <li>
                     <a [routerLink]="['/orders']" routerLinkActive="text-gray-900"
