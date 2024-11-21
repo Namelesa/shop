@@ -39,11 +39,18 @@ export class DishIngridientService {
     return this.http.post(`${this.apiUrl}/AddIngridient?name=${ingridient.name}&image=${ingridient.image}`, ingridient).pipe(tap(() => this.clearCache()));
   }
 
-  addIngridientToDish(dishId: number, ingridientId: number): Observable<any> {
+  addIngridientToDish(dishId: number, ingridientName: string): Observable<any> {
+    const params = new HttpParams()
+      .set('dishId', dishId.toString())
+      .set('name', ingridientName);
+    return this.http.post(`${this.apiUrl}/AddIngridientToDish`, null, { params });
+  }
+
+  removeIngridientFromDish(dishId: number, ingridientId: number): Observable<any> {
     const params = new HttpParams()
       .set('dishId', dishId.toString())
       .set('ingridientId', ingridientId.toString());
-    return this.http.post(`${this.apiUrl}/AddIngridientToDish`, null, { params });
+    return this.http.delete(`${this.apiUrl}/RemoveIngridientFromDish`, { params });
   }
 
   updateIngridient(ingridient: any): Observable<any> {
@@ -58,4 +65,10 @@ export class DishIngridientService {
     const params = new HttpParams().set('id', id.toString());
     return this.http.delete(`${this.apiUrl}/DeleteIngridient`, { params });
   }
+
+  getDishesContainingIngredient(id: number): Observable<any[]> {
+    const params = new HttpParams().set('id', id.toString());
+    return this.http.get<any[]>(`${this.apiUrl}/GetDishAndIngridient`, { params });
+  }
+  
 }

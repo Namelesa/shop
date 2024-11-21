@@ -18,10 +18,10 @@
     <h3 class="text-gray-900 font-semibold mb-2">Ingredients:</h3>
     <ul class="list-disc list-inside text-gray-700 mb-4">
       <li *ngFor="let ingredient of dish?.ingridients">
-          {{ ingredient.name }}
+        {{ ingredient.name }}
       </li>
     </ul>
-    <div class="flex space-x-4">
+    <div class="flex space-x-4 mt-4">
       <button (click)="toggleEditMode()" class="flex items-center justify-center px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-all duration-300 shadow hover:shadow-md">
         Edit
       </button>
@@ -35,32 +35,36 @@
   </div>
 
   <div *ngIf="isEditing">
-    <h2 class="text-xl font-bold mb-4 text-black">Edit Dish</h2>
-    <div>
-      <label class="block mb-2 text-black">Name</label>
-      <input type="text" [(ngModel)]="dish.name" class="border rounded p-2 w-full" required />
-      <div *ngIf="nameError" class="text-red-500 text-sm">Name is required.</div>
+    <h3 class="text-gray-900 font-semibold mb-4">Edit Dish</h3>
+    <div class="flex flex-col space-y-4">
+      <input [(ngModel)]="dish.name" placeholder="Dish Name" class="p-2 border border-gray-300 rounded" />
+      <input [(ngModel)]="dish.image" placeholder="Dish Image URL" class="p-2 border border-gray-300 rounded" />
+      <input [(ngModel)]="newprice" placeholder="Dish Price" type="number" class="p-2 border border-gray-300 rounded" />
+      
+      <h4 class="text-gray-900 font-semibold mb-2">Ingredients:</h4>
+      <ul class="list-disc list-inside text-gray-700 mb-4">
+        <li *ngFor="let ingredient of dish?.ingridients">
+          {{ ingredient.name }}
+          <button (click)="removeIngredient(ingredient.id)" class="ml-2 text-red-600 hover:text-red-800 transition duration-200">
+            Remove
+          </button>
+        </li>
+      </ul>
+      <div class="flex items-center space-x-4">
+        <input [(ngModel)]="newIngredientName" placeholder="New ingredient" class="p-2 border border-gray-300 rounded flex-1" />
+        <button (click)="addIngredient()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 transition-all duration-300">
+          Add
+        </button>
+      </div>
+
+      <div class="flex space-x-4 mt-4">
+        <button (click)="submitChanges()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 transition-all duration-300">
+          Save Changes
+        </button>
+        <button (click)="toggleEditMode()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-500 transition-all duration-300">
+          Cancel
+        </button>
+      </div>
     </div>
-    <div>
-      <label class="block mb-2 text-black">Image URL</label>
-      <input type="text" [(ngModel)]="dish.image" class="border rounded p-2 w-full" required pattern="https?://.+" />
-      <div *ngIf="imageError" class="text-red-500 text-sm">A valid image URL is required.</div>
-    </div>
-    <div>
-      <label class="block mb-2 text-black">Price</label>
-      <input type="number" [(ngModel)]="newprice" class="border rounded p-2 w-full" min="0.01" />
-      <div *ngIf="priceError" class="text-red-500 text-sm">Price must be greater than 0.</div>
-    </div>
-    <div>
-      <label class="block mb-2 text-black">Price</label>
-      <input type="text" [(ngModel)]="dish.ingridients" class="border rounded p-2 w-full" required/>
-    </div>
-    <button (click)="submitChanges()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-all duration-300 shadow hover:shadow-md">
-      Save Changes
-    </button>
-    <button (click)="toggleEditMode()" class="ml-2 px-5 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-all duration-300 shadow hover:shadow-md">
-      Cancel
-    </button>
-    <div *ngIf="error" class="text-red-500 mt-4">{{ error }}</div>
   </div>
 </div>

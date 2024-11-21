@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { DishService } from '../../content/services/dish.service';
 import { DishSizeService } from '../../content/services/dish.size.service';
+import { DishIngridientService } from '../../content/services/dish.ingridient.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../content/services/notification.service';
@@ -30,13 +31,15 @@ export class DishDescriptionComponent implements OnInit {
   priceError = false;
   nameLengthError = false;
   nameMaxLengthError = false;
+  newIngredientName: string = '';
 
   constructor(
     private route: ActivatedRoute,
     private dishService: DishService,
     private dishSizeService: DishSizeService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private dishIngridientService: DishIngridientService
     
   ) {}
 
@@ -172,4 +175,33 @@ export class DishDescriptionComponent implements OnInit {
     this.router.navigate(['/home']);
   }
   
+  addIngredient() {
+    if (!this.newIngredientName.trim()) {
+      this.notificationService.showError('Ingredient name cannot be empty');
+      return;
+    }
+
+    this.dishIngridientService.addIngridientToDish(this.dish.id, this.newIngredientName).subscribe(
+      () => {
+        this.notificationService.showSuccess('Ingredient added successfully');
+        this.fetchDishDetails(this.dish.id);
+      },
+      () => {
+        this.notificationService.showError('Error adding ingredient');
+      }
+    );
+  }
+
+  removeIngredient(ingredientId: number) {
+    this.dishIngridientService.removeIngridientFromDish(this.dish.id, ingredientId).subscribe(
+      () => {
+        this.notificationService.showSuccess('Ingredient removed successfully');
+        this.fetchDishDetails(this.dish.id);
+      },
+      () => {
+        this.notificationService.showError('Error removing ingredient');
+      }
+    );
+  }
+
 }

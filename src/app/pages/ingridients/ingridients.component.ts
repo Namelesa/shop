@@ -20,6 +20,9 @@ export class IngridientsComponent implements OnInit {
   selectedIngredient: any = {};
   dishesContainingIngredient: any[] = [];
   isEditMode = false;
+  public dishes: any[] = [];
+  public ingredientId: number = 0;
+  public errorMessage: string = '';
 
   nameError = false;
   imageError = false;
@@ -31,6 +34,19 @@ export class IngridientsComponent implements OnInit {
   ngOnInit(): void {
     this.loadIngredients();
   }
+
+
+  loadDishesForIngredient(ingredientId: number): void {
+    this.dishIngridientService.getDishesContainingIngredient(ingredientId).subscribe(
+      (dishes) => {
+        this.dishesContainingIngredient = dishes;
+      },
+      (error) => {
+        console.error('Error loading dishes:', error);
+      }
+    );
+  }
+
 
   loadIngredients() {
     this.dishIngridientService.getAllIngridients().subscribe(
@@ -46,6 +62,7 @@ export class IngridientsComponent implements OnInit {
 
   openIngredientDetails(ingredient: any) {
     this.selectedIngredient = ingredient;
+    this.loadDishesForIngredient(ingredient.id);
     this.showDetails = true;
   }
 
