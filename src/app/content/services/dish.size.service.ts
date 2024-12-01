@@ -33,7 +33,7 @@ export class DishSizeService {
   }
 
   deleteSize(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/DeleteDishShize?id=${id}`).pipe(
+    return this.http.delete(`${this.apiUrl}/DeleteDishSize?id=${id}`).pipe(
       tap(() => this.clearCache())
     );
   }
